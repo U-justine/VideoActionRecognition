@@ -1,0 +1,24 @@
+# Core ML/AI packages
+torch>=2.2.0
+torchvision>=0.17.0
+transformers==4.43.3
+accelerate>=0.33.0
+
+# Image/Video processing - with numpy compatibility
+numpy>=1.24.0,<2.0
+Pillow>=10.0.0
+opencv-python-headless>=4.9.0  # headless version has better numpy compatibility
+
+# Streamlit and web interface
+streamlit>=1.36.0
+
+# Video processing utilities
+ffmpeg-python>=0.2.0
+decord>=0.6.0
+
+# Optional: faster video reading
+# av>=8.0.0
+
+# Development and debugging
+# pytest>=7.0.0
+# black>=22.0.0

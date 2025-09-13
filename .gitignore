@@ -1,0 +1,17 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.venv
+.env.local
+.DS_Store
+.vscode/
+.idea/
+*.log
+.cache/
+outputs/
+checkpoints/
+models/
+.vite/
+.streamlit/
