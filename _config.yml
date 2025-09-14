@@ -1,0 +1,48 @@
+# GitHub Pages Configuration
+title: "AI Video Action Recognition"
+description: "Revolutionary AI-powered video analysis using Facebook's TimeSformer model"
+url: "https://U-justine.github.io"
+baseurl: "/VideoActionRecognition-AI-VIDEO-RECOGNITIONS"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+theme: minima
+
+# SEO and social
+author: "Video Action Recognition Team"
+
+github_username: https://github.com/U-justine
+
+# Collections
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Exclude files
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/
+  - .bundle/
+  - .sass-cache/
+  - .jekyll-cache/
+  - gemfiles/
+  - README.md
+  - LICENSE
+  - "*.py"
+  - "*.sh"
+  - "*.mp4"
+  - requirements.txt
+  - .venv/
+  - __pycache__/
+  - "*.pyc"
+  - .git/
+  - .gitignore
+
+# Include files
+include:
+  - _pages
+  - assets
