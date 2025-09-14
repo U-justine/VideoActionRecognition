@@ -1,0 +1,911 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>AI Video Action Recognition | TimeSformer</title>
+        <meta
+            name="description"
+            content="AI-powered video action recognition using Facebook's TimeSformer model. Upload videos and get real-time predictions of human actions."
+        />
+        <meta
+            name="keywords"
+            content="AI, video recognition, action recognition, TimeSformer, machine learning, computer vision"
+        />
+
+        <!-- Open Graph Meta Tags -->
+        <meta property="og:title" content="AI Video Action Recognition" />
+        <meta
+            property="og:description"
+            content="AI-powered video action recognition using Facebook's TimeSformer model"
+        />
+        <meta property="og:type" content="website" />
+        <meta
+            property="og:image"
+            content="https://u-justine.github.io/VideoActionRecognition/preview.png"
+        />
+
+        <!-- Fonts and Icons -->
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        />
+
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: "Inter", sans-serif;
+                line-height: 1.6;
+                color: #2d3748;
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                min-height: 100vh;
+            }
+
+            .container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 20px;
+            }
+
+            /* Header */
+            header {
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(10px);
+                border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+                position: sticky;
+                top: 0;
+                z-index: 100;
+                padding: 1rem 0;
+            }
+
+            nav {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .logo {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 1.5rem;
+                font-weight: 700;
+                color: #667eea;
+                text-decoration: none;
+            }
+
+            .nav-links {
+                display: flex;
+                gap: 2rem;
+                list-style: none;
+            }
+
+            .nav-links a {
+                text-decoration: none;
+                color: #4a5568;
+                font-weight: 500;
+                transition: color 0.3s ease;
+            }
+
+            .nav-links a:hover {
+                color: #667eea;
+            }
+
+            /* Hero Section */
+            .hero {
+                background: linear-gradient(
+                    135deg,
+                    #667eea 0%,
+                    #764ba2 50%,
+                    #f093fb 100%
+                );
+                color: white;
+                padding: 6rem 0;
+                text-align: center;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .hero::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            }
+
+            .hero-content {
+                position: relative;
+                z-index: 2;
+            }
+
+            .hero h1 {
+                font-size: 3.5rem;
+                font-weight: 800;
+                margin-bottom: 1.5rem;
+                background: linear-gradient(45deg, #ffffff, #f0f8ff);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .hero p {
+                font-size: 1.3rem;
+                margin-bottom: 2rem;
+                opacity: 0.9;
+                max-width: 600px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .cta-buttons {
+                display: flex;
+                gap: 1rem;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            .btn {
+                padding: 1rem 2rem;
+                border-radius: 50px;
+                text-decoration: none;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                border: 2px solid transparent;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .btn-primary {
+                background: rgba(255, 255, 255, 0.2);
+                color: white;
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                backdrop-filter: blur(10px);
+            }
+
+            .btn-primary:hover {
+                background: rgba(255, 255, 255, 0.3);
+                transform: translateY(-2px);
+            }
+
+            .btn-secondary {
+                background: transparent;
+                color: white;
+                border: 2px solid rgba(255, 255, 255, 0.5);
+            }
+
+            .btn-secondary:hover {
+                background: rgba(255, 255, 255, 0.1);
+                transform: translateY(-2px);
+            }
+
+            /* Notice Section */
+            .notice {
+                background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
+                padding: 2rem 0;
+                text-align: center;
+                border-top: 1px solid rgba(255, 255, 255, 0.2);
+            }
+
+            .notice-content {
+                background: rgba(255, 255, 255, 0.9);
+                border-radius: 15px;
+                padding: 2rem;
+                margin: 0 auto;
+                max-width: 800px;
+            }
+
+            .notice h3 {
+                color: #e17055;
+                margin-bottom: 1rem;
+                font-size: 1.5rem;
+            }
+
+            .notice p {
+                color: #2d3748;
+                margin-bottom: 1rem;
+            }
+
+            /* Deployment Options */
+            .deployment {
+                padding: 6rem 0;
+                background: white;
+            }
+
+            .deployment h2 {
+                text-align: center;
+                font-size: 2.5rem;
+                margin-bottom: 3rem;
+                color: #2d3748;
+            }
+
+            .deployment-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                gap: 2rem;
+                margin-bottom: 3rem;
+            }
+
+            .deployment-card {
+                background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+                padding: 2rem;
+                border-radius: 20px;
+                text-align: center;
+                transition:
+                    transform 0.3s ease,
+                    box-shadow 0.3s ease;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+
+            .deployment-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            }
+
+            .deployment-icon {
+                font-size: 3rem;
+                margin-bottom: 1rem;
+            }
+
+            .deployment-card h3 {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+                color: #2d3748;
+            }
+
+            .deployment-card p {
+                color: #4a5568;
+                line-height: 1.6;
+                margin-bottom: 1.5rem;
+            }
+
+            .deployment-card .btn {
+                margin-top: 1rem;
+            }
+
+            /* Features Section */
+            .features {
+                padding: 6rem 0;
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            }
+
+            .features h2 {
+                text-align: center;
+                font-size: 2.5rem;
+                margin-bottom: 3rem;
+                color: #2d3748;
+            }
+
+            .features-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 2rem;
+            }
+
+            .feature-card {
+                background: rgba(255, 255, 255, 0.9);
+                padding: 2rem;
+                border-radius: 20px;
+                text-align: center;
+                transition:
+                    transform 0.3s ease,
+                    box-shadow 0.3s ease;
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+
+            .feature-card:hover {
+                transform: translateY(-10px);
+                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            }
+
+            .feature-icon {
+                font-size: 3rem;
+                color: #667eea;
+                margin-bottom: 1rem;
+            }
+
+            .feature-card h3 {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+                color: #2d3748;
+            }
+
+            .feature-card p {
+                color: #4a5568;
+                line-height: 1.6;
+            }
+
+            /* Installation Section */
+            .installation {
+                padding: 6rem 0;
+                background: white;
+            }
+
+            .installation h2 {
+                text-align: center;
+                font-size: 2.5rem;
+                margin-bottom: 3rem;
+                color: #2d3748;
+            }
+
+            .code-block {
+                background: #1a202c;
+                color: #e2e8f0;
+                padding: 2rem;
+                border-radius: 15px;
+                margin: 1rem 0;
+                overflow-x: auto;
+                position: relative;
+            }
+
+            .code-block::before {
+                content: "$ ";
+                color: #48bb78;
+                font-weight: bold;
+            }
+
+            .copy-btn {
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                background: #4a5568;
+                color: white;
+                border: none;
+                padding: 0.5rem 1rem;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background 0.3s ease;
+            }
+
+            .copy-btn:hover {
+                background: #2d3748;
+            }
+
+            /* Footer */
+            footer {
+                background: #1a202c;
+                color: white;
+                text-align: center;
+                padding: 3rem 0;
+            }
+
+            .footer-content {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 2rem;
+            }
+
+            .social-links {
+                display: flex;
+                gap: 1rem;
+            }
+
+            .social-links a {
+                color: #a0aec0;
+                font-size: 1.5rem;
+                transition: color 0.3s ease;
+            }
+
+            .social-links a:hover {
+                color: #667eea;
+            }
+
+            /* Responsive */
+            @media (max-width: 768px) {
+                .hero h1 {
+                    font-size: 2.5rem;
+                }
+
+                .hero p {
+                    font-size: 1.1rem;
+                }
+
+                .nav-links {
+                    display: none;
+                }
+
+                .footer-content {
+                    flex-direction: column;
+                    text-align: center;
+                }
+
+                .deployment-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            /* Animations */
+            @keyframes fadeInUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(30px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+
+            .fade-in-up {
+                animation: fadeInUp 0.6s ease-out;
+            }
+
+            /* Particle background */
+            .particles {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                overflow: hidden;
+            }
+
+            .particle {
+                position: absolute;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 50%;
+                animation: float 6s ease-in-out infinite;
+            }
+
+            @keyframes float {
+                0%,
+                100% {
+                    transform: translateY(0px) rotate(0deg);
+                }
+                50% {
+                    transform: translateY(-20px) rotate(180deg);
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- Header -->
+        <header>
+            <nav class="container">
+                <a href="#" class="logo">
+                    <i class="fas fa-video"></i>
+                    VideoAI
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#deployment">How to Use</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#installation">Setup</a></li>
+                    <li>
+                        <a
+                            href="https://github.com/u-justine/VideoActionRecognition"
+                            target="_blank"
+                        >
+                            <i class="fab fa-github"></i> GitHub
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="particles">
+                <!-- Animated particles will be added via JavaScript -->
+            </div>
+            <div class="container hero-content">
+                <h1 class="fade-in-up">AI Video Action Recognition</h1>
+                <p class="fade-in-up">
+                    Powered by Facebook's TimeSformer model, this application
+                    can identify and classify human actions in video clips with
+                    state-of-the-art accuracy.
+                </p>
+                <div class="cta-buttons fade-in-up">
+                    <a href="#deployment" class="btn btn-primary">
+                        <i class="fas fa-play"></i>
+                        Get Started
+                    </a>
+                    <a
+                        href="https://github.com/U-justine/VideoActionRecognition"
+                        class="btn btn-secondary"
+                        target="_blank"
+                    >
+                        <i class="fab fa-github"></i>
+                        View Source
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Notice Section -->
+        <section class="notice">
+            <div class="container">
+                <div class="notice-content">
+                    <h3>
+                        <i class="fas fa-info-circle"></i> How to Access the
+                        Live Demo
+                    </h3>
+                    <p>
+                        <strong
+                            >This GitHub Pages site shows the project
+                            information.</strong
+                        >
+                        To actually upload videos and test the AI model, you
+                        need to run the application locally or deploy it to a
+                        cloud platform.
+                    </p>
+                    <p>
+                        Choose one of the deployment options below to start
+                        using the video action recognition feature!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Deployment Options -->
+        <section id="deployment" class="deployment">
+            <div class="container">
+                <h2>How to Use the App</h2>
+                <div class="deployment-grid">
+                    <div class="deployment-card">
+                        <div class="deployment-icon" style="color: #4ade80">
+                            <i class="fas fa-desktop"></i>
+                        </div>
+                        <h3>Run Locally</h3>
+                        <p>
+                            Download and run the application on your computer.
+                            This gives you full control and doesn't require any
+                            cloud credits.
+                        </p>
+                        <a href="#installation" class="btn btn-primary">
+                            <i class="fas fa-download"></i>
+                            Setup Guide
+                        </a>
+                    </div>
+
+                    <div class="deployment-card">
+                        <div class="deployment-icon" style="color: #3b82f6">
+                            <i class="fab fa-google"></i>
+                        </div>
+                        <h3>Google Colab</h3>
+                        <p>
+                            Run the app in Google Colab with GPU acceleration.
+                            Perfect for quick testing without local
+                            installation.
+                        </p>
+                        <a
+                            href="https://colab.research.google.com/github/u-justine/VideoActionRecognition/blob/main/VideoActionRecognition_Colab.ipynb"
+                            class="btn btn-primary"
+                            target="_blank"
+                        >
+                            <i class="fas fa-external-link-alt"></i>
+                            Open Colab
+                        </a>
+                    </div>
+
+                    <div class="deployment-card">
+                        <div class="deployment-icon" style="color: #8b5cf6">
+                            <i class="fas fa-cloud"></i>
+                        </div>
+                        <h3>Hugging Face Spaces</h3>
+                        <p>
+                            Try the live demo hosted on Hugging Face Spaces.
+                            Upload your video directly in the browser.
+                        </p>
+                        <a
+                            href="https://huggingface.co/spaces/u-justine/video-action-recognition"
+                            class="btn btn-primary"
+                            target="_blank"
+                        >
+                            <i class="fas fa-rocket"></i>
+                            Live Demo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features">
+            <div class="container">
+                <h2>Key Features</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3>AI-Powered Recognition</h3>
+                        <p>
+                            Uses Facebook's TimeSformer model fine-tuned on
+                            Kinetics-400 dataset with 400+ action classes for
+                            accurate predictions.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h3>Real-Time Processing</h3>
+                        <p>
+                            Efficiently processes videos using GPU acceleration
+                            when available, with fallback to CPU for universal
+                            compatibility.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-upload"></i>
+                        </div>
+                        <h3>Easy Upload</h3>
+                        <p>
+                            Simple drag-and-drop interface supporting multiple
+                            video formats (MP4, MOV, AVI, MKV) up to 200MB.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <h3>Detailed Results</h3>
+                        <p>
+                            Get top-k predictions with confidence scores and
+                            visual feedback for better understanding of model
+                            decisions.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-list"></i>
+                        </div>
+                        <h3>400+ Actions</h3>
+                        <p>
+                            Recognizes sports, daily activities, musical
+                            performances, exercise, work activities, and social
+                            interactions.
+                        </p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fab fa-osi"></i>
+                        </div>
+                        <h3>Open Source</h3>
+                        <p>
+                            Complete source code available on GitHub with
+                            detailed documentation and setup instructions.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Installation Section -->
+        <section id="installation" class="installation">
+            <div class="container">
+                <h2>Local Installation</h2>
+                <div style="max-width: 800px; margin: 0 auto">
+                    <h3 style="margin-bottom: 1rem">1. Clone the Repository</h3>
+                    <div class="code-block">
+                        git clone
+                        https://github.com/u-justine/VideoActionRecognition.git
+                        <button
+                            class="copy-btn"
+                            onclick="copyToClipboard('git clone https://github.com/u-justine/VideoActionRecognition.git')"
+                        >
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+
+                    <h3 style="margin: 2rem 0 1rem 0">2. Setup Environment</h3>
+                    <div class="code-block">
+                        cd VideoActionRecognition && python3 -m venv .venv &&
+                        source .venv/bin/activate
+                        <button
+                            class="copy-btn"
+                            onclick="copyToClipboard('cd VideoActionRecognition && python3 -m venv .venv && source .venv/bin/activate')"
+                        >
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+
+                    <h3 style="margin: 2rem 0 1rem 0">
+                        3. Install Dependencies
+                    </h3>
+                    <div class="code-block">
+                        pip install -r requirements.txt
+                        <button
+                            class="copy-btn"
+                            onclick="copyToClipboard('pip install -r requirements.txt')"
+                        >
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+
+                    <h3 style="margin: 2rem 0 1rem 0">
+                        4. Run the Application
+                    </h3>
+                    <div class="code-block">
+                        ./run_app.sh
+                        <button
+                            class="copy-btn"
+                            onclick="copyToClipboard('./run_app.sh')"
+                        >
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+
+                    <div
+                        style="
+                            background: #e6fffa;
+                            border: 1px solid #38b2ac;
+                            border-radius: 10px;
+                            padding: 1.5rem;
+                            margin-top: 2rem;
+                        "
+                    >
+                        <div
+                            style="
+                                display: flex;
+                                align-items: center;
+                                gap: 0.5rem;
+                                margin-bottom: 0.5rem;
+                            "
+                        >
+                            <i
+                                class="fas fa-info-circle"
+                                style="color: #38b2ac"
+                            ></i>
+                            <strong style="color: #234e52">Pro Tips</strong>
+                        </div>
+                        <ul
+                            style="
+                                color: #234e52;
+                                margin: 0;
+                                padding-left: 1rem;
+                            "
+                        >
+                            <li>
+                                If dependencies fail to install, run
+                                <code>./run_fix.sh</code> first
+                            </li>
+                            <li>
+                                The app will open at
+                                <code>http://localhost:8501</code> in your
+                                browser
+                            </li>
+                            <li>
+                                Use GPU-enabled environment for faster
+                                processing
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <div class="container">
+                <div class="footer-content">
+                    <div>
+                        <p>
+                            &copy; 2024 Video Action Recognition. Built with ❤️
+                            using TimeSformer.
+                        </p>
+                    </div>
+                    <div class="social-links">
+                        <a
+                            href="https://github.com/u-justine/VideoActionRecognition"
+                            target="_blank"
+                            title="GitHub Repository"
+                        >
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a
+                            href="https://huggingface.co/facebook/timesformer-base-finetuned-k400"
+                            target="_blank"
+                            title="TimeSformer Model"
+                        >
+                            <i class="fas fa-robot"></i>
+                        </a>
+                        <a
+                            href="https://arxiv.org/abs/2102.05095"
+                            target="_blank"
+                            title="Research Paper"
+                        >
+                            <i class="fas fa-file-alt"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <script>
+            // Copy to clipboard function
+            function copyToClipboard(text) {
+                navigator.clipboard.writeText(text).then(function () {
+                    const btn = event.target.closest(".copy-btn");
+                    const original = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-check"></i>';
+                    btn.style.background = "#48bb78";
+                    setTimeout(() => {
+                        btn.innerHTML = original;
+                        btn.style.background = "#4a5568";
+                    }, 1000);
+                });
+            }
+
+            // Create floating particles
+            function createParticles() {
+                const particles = document.querySelector(".particles");
+                const particleCount = 50;
+
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement("div");
+                    particle.className = "particle";
+                    particle.style.left = Math.random() * 100 + "%";
+                    particle.style.top = Math.random() * 100 + "%";
+                    particle.style.width = Math.random() * 4 + 2 + "px";
+                    particle.style.height = particle.style.width;
+                    particle.style.animationDelay = Math.random() * 6 + "s";
+                    particle.style.animationDuration =
+                        Math.random() * 4 + 4 + "s";
+                    particles.appendChild(particle);
+                }
+            }
+
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+                anchor.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(
+                        this.getAttribute("href"),
+                    );
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: "smooth",
+                            block: "start",
+                        });
+                    }
+                });
+            });
+
+            // Initialize particles when page loads
+            document.addEventListener("DOMContentLoaded", createParticles);
+
+            // Add scroll animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: "0px 0px -100px 0px",
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = "1";
+                        entry.target.style.transform = "translateY(0)";
+                    }
+                });
+            }, observerOptions);
+
+            // Observe elements for scroll animations
+            document.addEventListener("DOMContentLoaded", () => {
+                const elements = document.querySelectorAll(
+                    ".feature-card, .deployment-card",
+                );
+                elements.forEach((el) => {
+                    el.style.opacity = "0";
+                    el.style.transform = "translateY(30px)";
+                    el.style.transition =
+                        "opacity 0.6s ease, transform 0.6s ease";
+                    observer.observe(el);
+                });
+            });
+        </script>
+    </body>
+</html>
